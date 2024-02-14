@@ -1,13 +1,12 @@
 defmodule Alarmclock.Router do
   use Plug.Router
-  import Crontab.CronExpression
 
   plug Plug.Parsers, parsers: [:urlencoded]
   plug :match
   plug :dispatch
 
   get "/" do
-    f = EEx.eval_file("index.eex", alarms: generate_alarm_list())
+    f = EEx.eval_file("index.eex", alarms: generate_alarm_list(), songs: Alarmclock.Song.songs())
     send_resp(conn, 200, f)
   end
 
@@ -19,13 +18,13 @@ defmodule Alarmclock.Router do
       cron != nil and song != nil ->
         case Crontab.CronExpression.Parser.parse(cron) do
           {:ok, expr} -> 
-            add_job(expr, song)
+            if song in Alarmclock.Song.songs(), do: add_job(expr, song)
         end
       delete != nil ->
-        IO.puts(delete)
+        Alarmclock.Scheduler.delete_job(String.to_atom(delete))
       true -> nil
     end
-    f = EEx.eval_file("index.eex", alarms: generate_alarm_list())
+    f = EEx.eval_file("index.eex", alarms: generate_alarm_list(), songs: Alarmclock.Song.songs())
     send_resp(conn, 200, f)
   end
 
@@ -34,12 +33,8 @@ defmodule Alarmclock.Router do
     Alarmclock.Scheduler.new_job()
     |> Quantum.Job.set_name(:"#{n}")
     |> Quantum.Job.set_schedule(cron)
-    |> Quantum.Job.set_task(fn -> do_song(song) end)
+    |> Quantum.Job.set_task(fn -> Alarmclock.Song.play_song(song) end)
     |> Alarmclock.Scheduler.add_job()
-  end
-
-  def do_song(song) do
-    IO.puts(song)
   end
 
   def generate_alarm_list() do

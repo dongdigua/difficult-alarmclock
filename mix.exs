@@ -23,7 +23,8 @@ defmodule Alarmclock.MixProject do
   defp deps do
     [
       {:bandit, "~> 1.0"},
-      {:quantum, "~> 3.0"}
+      {:quantum, "~> 3.0"},
+      {:tzdata, "~> 1.1"}
     ]
   end
 end

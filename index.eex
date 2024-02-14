@@ -14,7 +14,11 @@
     <% end %>
     <form action="#" method="post">
       <input type="text" name="cron">
-      <input type="text" name="song">
+      <select name="song">
+      <%= for song <- songs do %>
+        <option value="<%= song %>"><%= song %></option>
+      <% end %>
+      </select>
       <input type="submit" value="+">
     </form>
   </body>

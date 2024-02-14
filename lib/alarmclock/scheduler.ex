@@ -1,3 +1,3 @@
 defmodule Alarmclock.Scheduler do
-  use Quantum, otp_app: nil
+  use Quantum, otp_app: :alarmclock
 end

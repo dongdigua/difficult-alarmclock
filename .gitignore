@@ -26,3 +26,5 @@ alarmclock-*.tar
 /tmp/
 
 mix.lock
+
+/data/
