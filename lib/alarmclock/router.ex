@@ -6,7 +6,7 @@ defmodule Alarmclock.Router do
   plug :dispatch
 
   get "/" do
-    f = EEx.eval_file("index.eex", alarms: generate_alarm_list(), songs: Alarmclock.Song.songs())
+    f = render_html()
     send_resp(conn, 200, f)
   end
 
@@ -18,17 +18,17 @@ defmodule Alarmclock.Router do
       cron != nil and song != nil ->
         case Crontab.CronExpression.Parser.parse(cron) do
           {:ok, expr} -> 
-            if song in Alarmclock.Song.songs(), do: add_job(expr, song)
+            if song in Alarmclock.Song.songs(), do: add_alarm(expr, song)
         end
       delete != nil ->
         Alarmclock.Scheduler.delete_job(String.to_atom(delete))
       true -> nil
     end
-    f = EEx.eval_file("index.eex", alarms: generate_alarm_list(), songs: Alarmclock.Song.songs())
+    f = render_html()
     send_resp(conn, 200, f)
   end
 
-  def add_job(cron, song) do
+  def add_alarm(cron, song) do
     n = Alarmclock.Scheduler.jobs() |> Enum.count()
     Alarmclock.Scheduler.new_job()
     |> Quantum.Job.set_name(:"#{n}")
@@ -41,6 +41,10 @@ defmodule Alarmclock.Router do
     Alarmclock.Scheduler.jobs()
     |> Enum.map(fn x -> elem(x, 1) end)
     |> Enum.map(fn x -> {inspect(x.schedule), Atom.to_string(x.name)} end)
+  end
+
+  def render_html() do
+    EEx.eval_file("index.eex", alarms: generate_alarm_list(), songs: Alarmclock.Song.songs())
   end
 
   match _ do

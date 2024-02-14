@@ -4,7 +4,7 @@ requirement: `mpg123`
 
 ## Usage
 
-1. put songs in `data` directory
+1. put mp3 in `data` directory
 2. configure timezone in `config/config.exs`
 3. start with `mix run --no-halt`
 4. visit http://127.0.0.1:4000
