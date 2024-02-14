@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+    <title></title>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <%= for {cron, id} <- alarms do %>
+      <form style='display: inline' method='post' action='/'>
+        <%= cron %>
+        <button type='submit' name='delete' value='<%= id %>'>x</button>
+        <br>
+      </form>
+    <% end %>
+    <form action="#" method="post">
+      <input type="text" name="cron">
+      <input type="text" name="song">
+      <input type="submit" value="+">
+    </form>
+  </body>
+</html>
