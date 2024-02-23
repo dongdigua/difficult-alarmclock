@@ -6,7 +6,8 @@ defmodule Alarmclock.Application do
   def start(_type, _args) do
     children = [
       {Bandit, plug: Alarmclock.Router},
-      Alarmclock.Scheduler
+      Alarmclock.Scheduler,
+      {Alarmclock.Atompool, []}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

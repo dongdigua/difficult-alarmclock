@@ -15,10 +15,10 @@ defmodule Alarmclock.Router do
   post "/api/add" do
     cron = conn.params["cron"]
     song = conn.params["song"]
-    if  cron != nil and song != nil do
+    if  cron != nil and song in Alarmclock.Song.songs() do
       case Crontab.CronExpression.Parser.parse(cron) do
         {:ok, expr} ->
-          if song in Alarmclock.Song.songs(), do: add_alarm(expr, song)
+          add_alarm(expr, song)
       end
     end
     conn
@@ -28,23 +28,24 @@ defmodule Alarmclock.Router do
 
   post "/api/del" do
     delete = conn.params["delete"]
-    Alarmclock.Scheduler.delete_job(String.to_atom(delete))
+    delete_alarm(String.to_existing_atom(delete))
     conn
     |> put_resp_header("location", "/")
     |> send_resp(302, "")
   end
 
   def add_alarm(cron, song) do
-    name =
-      :crypto.hash(:blake2b, "#{System.os_time()}")
-      |> binary_slice(0..7)
-      |> Base.encode16()
-      |> String.to_atom() # potential OOM
+    name = Alarmclock.Atompool.alloc()
     Alarmclock.Scheduler.new_job()
     |> Quantum.Job.set_name(name)
     |> Quantum.Job.set_schedule(cron)
     |> Quantum.Job.set_task(fn -> Alarmclock.Song.play_song(song) end)
     |> Alarmclock.Scheduler.add_job()
+  end
+
+  def delete_alarm(alarm) do
+    Alarmclock.Scheduler.delete_job(alarm)
+    Alarmclock.Atompool.dealloc(alarm)
   end
 
   def generate_alarm_list() do
