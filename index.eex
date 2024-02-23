@@ -1,18 +1,18 @@
 <!doctype html>
 <html>
   <head>
-    <title></title>
+    <title>Alarm Clock</title>
     <meta charset="utf-8" />
   </head>
   <body>
     <%= for {cron, id} <- alarms do %>
-      <form style='display: inline' method='post' action='/'>
-        <%= cron %>
+      <form style='display: inline' method='post' action='/api/del'>
+        <code><%= cron %></code>
         <button type='submit' name='delete' value='<%= id %>'>x</button>
         <br>
       </form>
     <% end %>
-    <form action="#" method="post">
+    <form action="/api/add" method="post">
       <input type="text" name="cron">
       <select name="song">
       <%= for song <- songs do %>
