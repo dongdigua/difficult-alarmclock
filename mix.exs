@@ -5,7 +5,7 @@ defmodule Alarmclock.MixProject do
     [
       app: :alarmclock,
       version: "0.1.0",
-      elixir: "~> 1.16",
+      elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -24,6 +24,7 @@ defmodule Alarmclock.MixProject do
     [
       {:bandit, "~> 1.0"},
       {:quantum, "~> 3.0"},
+      {:quantum_storage_persistent_ets, "~> 1.0"},
       {:tzdata, "~> 1.1"}
     ]
   end

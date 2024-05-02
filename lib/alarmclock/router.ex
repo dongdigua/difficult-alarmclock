@@ -1,6 +1,8 @@
 defmodule Alarmclock.Router do
   use Plug.Router
 
+  plug Plug.Logger
+  plug Plug.Static, from: ".", at: "/", only: ~w(favicon.ico)
   plug Plug.Parsers, parsers: [:urlencoded]
   plug :match
   plug :dispatch
@@ -59,7 +61,6 @@ defmodule Alarmclock.Router do
   end
 
   match _ do
-    IO.inspect(conn)
     send_resp(conn, 404, "404")
   end
 end

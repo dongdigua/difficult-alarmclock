@@ -7,7 +7,8 @@ defmodule Alarmclock.Application do
     children = [
       {Bandit, plug: Alarmclock.Router},
       Alarmclock.Scheduler,
-      {Alarmclock.Atompool, []}
+      {Alarmclock.Atompool, []},
+      {QuantumStoragePersistentEts, name: Alarmclock.Storage}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
