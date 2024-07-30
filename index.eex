@@ -5,6 +5,10 @@
     <meta charset="utf-8" />
   </head>
   <body>
+    <form style='display: inline' method='post' action='/api/pkill'>
+      <button type='submit'>🗡</button>
+      <br>
+    </form>
     <%= for {cron, id} <- alarms do %>
       <form style='display: inline' method='post' action='/api/del'>
         <code><%= cron %></code>
@@ -19,7 +23,8 @@
         <option value="<%= song %>"><%= song %></option>
       <% end %>
       </select>
-      <input type="submit" value="+">
+      <input type="submit" value="+" name="type">
+      <input type="submit" value="»" name="type">
     </form>
   </body>
 </html>

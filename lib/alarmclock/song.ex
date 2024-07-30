@@ -1,4 +1,6 @@
 defmodule Alarmclock.Song do
+  require Logger
+
   def songs() do
     case File.ls("data") do
       {:ok, files} -> ["random" | files]
@@ -12,5 +14,10 @@ defmodule Alarmclock.Song do
                 _ -> song
               end
     System.cmd("mpg123", ["-q", "--no-control", Path.join("data", to_play)])
+  end
+
+  def pkill() do
+    output = System.cmd("pkill", ["mpg123"])
+    Logger.info(inspect(output))
   end
 end

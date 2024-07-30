@@ -10,3 +10,6 @@ requirement: `mpg123`
 4. visit http://127.0.0.1:4000
 
 if you are unfamilliar with crontab syntax, visit [crontab.guru](https://crontab.guru)
+
+## TODO
+convert it into CGI script to save resource
