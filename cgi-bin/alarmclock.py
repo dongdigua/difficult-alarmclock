@@ -75,7 +75,7 @@ def router():
             case "add":
                 time = form["cron"][0]
                 song = form["song"][0]
-                if time != None and song != None and CronSlices.is_valid(time):
+                if time != None and song in os.listdir(SONG_DIR) and CronSlices.is_valid(time):
                     job = cron.new(command=f"-n {PLAYER} '{SONG_DIR}/{song}'", comment=str(uuid.uuid1()))
                     job.setall(time)
                     cron.write()
