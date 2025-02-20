@@ -51,6 +51,7 @@ def generate_html():
     {song_list}
       </select>
       <input type="submit" value="+" name="type">
+      <input type="submit" value="»" name="type">
     </form>
   </body>
 </html>
@@ -76,22 +77,39 @@ def router():
                 time = form["cron"][0]
                 song = form["song"][0]
                 if time != None and song in os.listdir(SONG_DIR) and CronSlices.is_valid(time):
-                    job = cron.new(command=f"-n {PLAYER} '{SONG_DIR}/{song}'", comment=str(uuid.uuid1()))
+                    job = 0
+                    if form["type"][0] == "+":
+                        job = cron.new(command=f"-n {PLAYER} '{SONG_DIR}/{song}'", comment=str(uuid.uuid1()))
+                    elif form["type"][0] == "»":
+                        uid = str(uuid.uuid1())
+                        job = cron.new(command=f"-n {__file__} '{SONG_DIR}/{song}' {uid}", comment=uid)
+
                     job.setall(time)
                     cron.write()
             case "del":
-                id = form["delete"][0]
-                if id != None:
-                    job_iter = cron.find_comment(id)
+                uid = form["delete"][0]
+                if uid != None:
+                    job_iter = cron.find_comment(uid)
                     [cron.remove(j) for j in job_iter]
                     cron.write()
             case "pkill":
-                subprocess.run(["pkill", PLAYER])
+                subprocess.run(["pkill", os.path.basename(PLAYER)])
             case _:
                 pass
         redirect()
     else:
         print("?")
 
+def do_oneshot():
+    song_with_dir = sys.argv[1]
+    uid = sys.argv[2]
+    job_iter = cron.find_comment(uid)
+    [cron.remove(j) for j in job_iter]
+    cron.write()
+    subprocess.run([PLAYER, song_with_dir])
 
-router()
+
+if len(sys.argv) < 2:
+    router()
+else:
+    do_oneshot()
